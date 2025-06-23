@@ -14,7 +14,7 @@ use crate::convert::{IntoNumpy, LoadImage, PyImage};
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
+fn chainner_ext(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<regex::RustRegex>()?;
     m.add_class::<regex::MatchGroup>()?;
     m.add_class::<regex::RegexMatch>()?;
@@ -42,7 +42,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
         threshold: f32,
         iterations: u32,
         fragment_count: u32,
-    ) -> PyResult<&'py PyArray3<f32>> {
+    ) -> PyResult<Bound<'py, PyArray3<f32>>> {
         let mut img = img.load_image()?;
         let result = py.allow_threads(|| {
             fill_alpha(
@@ -66,7 +66,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
         img: PyImage,
         threshold: f32,
         iterations: u32,
-    ) -> PyResult<&'py PyArray3<f32>> {
+    ) -> PyResult<Bound<'py, PyArray3<f32>>> {
         let mut img = img.load_image()?;
         let result = py.allow_threads(|| {
             fill_alpha(
@@ -88,7 +88,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
         threshold: f32,
         min_radius: u32,
         anti_aliasing: bool,
-    ) -> PyResult<&'py PyArray3<f32>> {
+    ) -> PyResult<Bound<'py, PyArray3<f32>>> {
         let mut img = img.load_image()?;
         let result = py.allow_threads(|| {
             fill_alpha(
@@ -113,7 +113,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
         threshold: f32,
         anti_aliasing: bool,
         extra_smoothness: Option<f32>,
-    ) -> PyResult<&'py PyArray3<f32>> {
+    ) -> PyResult<Bound<'py, PyArray3<f32>>> {
         let mut img: NDimImage = img.load_image()?;
         let result = py.allow_threads(|| {
             let aa = if anti_aliasing {
@@ -139,7 +139,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
         cutoff: f32,
         pre_process: bool,
         post_process: bool,
-    ) -> PyResult<&'py PyArray3<f32>> {
+    ) -> PyResult<Bound<'py, PyArray3<f32>>> {
         let img: Image<f32> = img.load_image()?;
         let result = py.allow_threads(|| {
             image_ops::esdt::esdf(&img, radius, cutoff, pre_process, post_process).into_numpy()
@@ -148,7 +148,7 @@ fn chainner_ext(_py: Python, m: &PyModule) -> PyResult<()> {
     }
 
     #[pyfn(m)]
-    fn fast_gamma<'py>(py: Python<'py>, img: PyImage, gamma: f32) -> PyResult<&'py PyArray3<f32>> {
+    fn fast_gamma<'py>(py: Python<'py>, img: PyImage, gamma: f32) -> PyResult<Bound<'py, PyArray3<f32>>>  {
         let mut img = img.load_image()?;
         let result = py.allow_threads(|| {
             image_ops::gamma::gamma_ndim(&mut img, gamma);

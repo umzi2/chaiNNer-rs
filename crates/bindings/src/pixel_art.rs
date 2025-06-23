@@ -14,13 +14,13 @@ pub fn pixel_art_upscale<'py>(
     img: PyImage<'py>,
     algorithm: &str,
     scale: u32,
-) -> PyResult<&'py PyArray3<f32>> {
+) -> PyResult<Bound<'py, PyArray3<f32>>> {
     fn with_pixel_format<'py, P>(
         py: Python<'py>,
         img: PyImage<'py>,
         algorithm: &str,
         scale: u32,
-    ) -> PyResult<&'py PyArray3<f32>>
+    ) -> PyResult<Bound<'py, PyArray3<f32>>>
     where
         P: FromFlat
             + Default

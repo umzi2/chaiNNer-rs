@@ -137,7 +137,7 @@ pub fn quantize<'py>(
     py: Python<'py>,
     img: PyImage<'py>,
     quant: Quant,
-) -> PyResult<&'py PyArray3<f32>> {
+) -> PyResult<Bound<'py, PyArray3<f32>>> {
     match quant {
         Quant::Uniform(quant) => {
             let mut img: NDimImage = img.load_image()?;
@@ -152,7 +152,7 @@ pub fn quantize<'py>(
                 py: Python<'py>,
                 img: PyImage<'py>,
                 quant: impl Quantizer<P, P> + Sync,
-            ) -> PyResult<&'py PyArray3<f32>>
+            ) -> PyResult<Bound<'py, PyArray3<f32>>>
             where
                 P: Pixel + Send + FromFlat,
                 Image<P>: IntoNumpy,
@@ -186,7 +186,7 @@ pub fn ordered_dither<'py>(
     img: PyImage,
     quant: UniformQuantization,
     map_size: u32,
-) -> PyResult<&'py PyArray3<f32>> {
+) -> PyResult<Bound<'py, PyArray3<f32>>> {
     if !map_size.is_power_of_two() {
         return Err(PyValueError::new_err(format!(
             "Argument '{}' must be a power of 2.",
@@ -213,7 +213,7 @@ mod diffusion {
         Config(py, img): Config<'_>,
         quant: impl Quantizer<P, P> + Sync,
         algorithm: impl image_ops::dither::DiffusionAlgorithm + Send,
-    ) -> PyResult<&PyArray3<f32>>
+    ) -> PyResult<Bound<PyArray3<f32>>>
     where
         P: Pixel + Send + FromFlat,
         Image<P>: IntoNumpy,
@@ -230,7 +230,7 @@ mod diffusion {
         config: Config,
         quant: Quant,
         algorithm: impl image_ops::dither::DiffusionAlgorithm + Send,
-    ) -> PyResult<&PyArray3<f32>> {
+    ) -> PyResult<Bound<PyArray3<f32>>> {
         let c = config.1.channels();
         let err = Err(PyValueError::new_err(format!(
             "Argument '{}' does not have the right shape. Expected 1, 3, or 4 channels but found {}.",
@@ -261,7 +261,7 @@ pub fn error_diffusion_dither<'py>(
     img: PyImage<'py>,
     quant: Quant,
     algorithm: DiffusionAlgorithm,
-) -> PyResult<&'py PyArray3<f32>> {
+) -> PyResult<Bound<'py, PyArray3<f32>>> {
     use diffusion::*;
 
     let config: Config<'py> = Config(py, img);
@@ -289,7 +289,7 @@ mod riemersma {
     pub fn with_pixel_format<P>(
         Config(py, img, history_length, decay_ratio): Config<'_>,
         quant: impl Quantizer<P, P> + Sync,
-    ) -> PyResult<&PyArray3<f32>>
+    )  -> PyResult<Bound<PyArray3<f32>>>
     where
         P: Pixel + Send + FromFlat,
         Image<P>: IntoNumpy,
@@ -310,7 +310,7 @@ pub fn riemersma_dither<'py>(
     quant: Quant,
     history_length: u32,
     decay_ratio: f32,
-) -> PyResult<&'py PyArray3<f32>> {
+) -> PyResult<Bound<'py, PyArray3<f32>>> {
     if history_length < 2 {
         return Err(PyValueError::new_err(format!(
             "Argument '{}' must be at least 2.",
