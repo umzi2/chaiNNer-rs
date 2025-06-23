@@ -2,7 +2,10 @@ use image_core::{
     util::slice_as_chunks, FromFlat, Image, ImageView, IntoPixels, NDimCow, NDimImage, NDimView,
     Shape, ShapeMismatch, Size,
 };
-use numpy::{ndarray::{Array3, Dimension}, Ix3, PyReadonlyArray, PyReadonlyArray2, PyReadonlyArray3, PyUntypedArrayMethods};
+use numpy::{
+    ndarray::{Array3, Dimension},
+    Ix3, PyReadonlyArray, PyReadonlyArray2, PyReadonlyArray3, PyUntypedArrayMethods,
+};
 use pyo3::{exceptions::PyValueError, FromPyObject, PyResult};
 
 #[derive(FromPyObject)]

@@ -289,7 +289,7 @@ mod riemersma {
     pub fn with_pixel_format<P>(
         Config(py, img, history_length, decay_ratio): Config<'_>,
         quant: impl Quantizer<P, P> + Sync,
-    )  -> PyResult<Bound<PyArray3<f32>>>
+    ) -> PyResult<Bound<PyArray3<f32>>>
     where
         P: Pixel + Send + FromFlat,
         Image<P>: IntoNumpy,
